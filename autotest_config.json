@@ -1,0 +1,50 @@
+{
+  "_comment": "Reproducer for TKA-10324 — Gradle 9 toolchain-only Java config fails GHE dependency resolution.",
+  "_tka": "https://mend-io.atlassian.net/browse/TKA-10324",
+  "_expected_behaviour": "Scanner SHOULD resolve all 5 direct deps (slf4j-api, guava, jackson-databind, commons-lang3, logback-classic) and their transitives. Currently it returns 0 deps because the toolchain resolution fails inside whitesourceDependenciesTask.",
+  "description": "Autotest configuration file for dependency tree detection validation",
+  "version": 1.5,
+  "base_config": {
+    "validate_scan_output": true,
+    "scan_output": {
+      "_comment_security_scan_report_conclusion": "Expected 'failure' while the bug is open — scanner returns 0 deps so no vulns detected. Update to 'failure' or remove once fixed.",
+      "security_scan_report_conclusion": "failure",
+      "total_libs_scanned": {
+        "gte": 0
+      },
+      "expected_messages": []
+    },
+    "validate_dependency_tree": true,
+    "dependency_tree": {
+      "check_dependency_tree_detection_status": true,
+      "_comment_expected_dependencies": "BUG ACTIVE: scanner returns 0 deps due to toolchain resolution failure. Set to 0 while tracking TKA-10324. Update to real counts (gte: 5 direct, gte: 20 total) once the fix is delivered.",
+      "expected_total_dependencies_number": {
+        "eq": 0
+      },
+      "expected_direct_dependencies_number": {
+        "eq": 0
+      },
+      "_comment_fix_target": "Once TKA-10324 is fixed, expected values should be: total gte 20, direct gte 5. Direct deps: slf4j-api, guava, jackson-databind, commons-lang3, logback-classic (+ transitive chain).",
+      "validate_agent_versions": false
+    },
+    "validate_vulnerabilities_table": false,
+    "vulnerabilities_table": {
+      "check_vulnerabilities_table_structure": true
+    },
+    "validate_scanner_logs": true,
+    "_comment_logs": "Validate that the known error message appears in scanner logs while the bug is open.",
+    "logs": {
+      "check_scanner_logs": true,
+      "expected_log_lines": [
+        {
+          "operator": "regex",
+          "value": "Cannot find a Java installation.*matching.*languageVersion=17"
+        }
+      ]
+    },
+    "validate_reachability": false,
+    "reachability": {
+      "check_reachability_status": false
+    }
+  }
+}
